@@ -1,8 +1,8 @@
-name: Simple CI/CD Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
   pull_request:
     branches: [ main ]
 
@@ -14,7 +14,7 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: 3.11
     
@@ -34,15 +34,14 @@ jobs:
     
     - name: Run tests
       run: |
-        python -m pytest tests/ -v --cov=. --cov-report=xml || echo "Tests completed with warnings"
+        python -m pytest tests/ -v --cov=. --cov-report=xml
     
-    - name: Check Python syntax
-      run: |
-        python -m py_compile *.py || echo "Syntax check completed"
-    
-    - name: Verify imports
-      run: |
-        python -c "import numpy, pandas, sklearn, xgboost, lightgbm; print('All dependencies imported successfully')" || echo "Import check completed"
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
 
   lint:
     runs-on: ubuntu-latest
@@ -51,7 +50,7 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: 3.11
     
@@ -61,13 +60,13 @@ jobs:
         pip install flake8 black mypy
     
     - name: Run flake8
-      run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics || echo "Linting completed with warnings"
+      run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
     
     - name: Run black
-      run: black --check . || echo "Formatting check completed"
+      run: black --check .
     
     - name: Run mypy
-      run: mypy . --ignore-missing-imports || echo "Type checking completed"
+      run: mypy . --ignore-missing-imports
 
   security:
     runs-on: ubuntu-latest
@@ -76,7 +75,7 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: 3.11
     
@@ -86,10 +85,10 @@ jobs:
         pip install bandit safety
     
     - name: Run bandit security scan
-      run: bandit -r . -f json -o bandit-report.json || echo "Security scan completed"
+      run: bandit -r . -f json -o bandit-report.json
     
     - name: Run safety check
-      run: safety check --json --output safety-report.json || echo "Safety check completed"
+      run: safety check --json --output safety-report.json
 
   build:
     runs-on: ubuntu-latest
@@ -99,7 +98,7 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: 3.11
     
@@ -109,10 +108,10 @@ jobs:
         pip install build twine
     
     - name: Build package
-      run: python -m build || echo "Build completed"
+      run: python -m build
     
     - name: Check package
-      run: twine check dist/* || echo "Package check completed"
+      run: twine check dist/*
     
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
