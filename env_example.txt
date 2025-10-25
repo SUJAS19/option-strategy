@@ -1,0 +1,26 @@
+# NIFTY Options Trading System - Environment Variables
+# Copy this file to .env and fill in your actual values
+
+# Zerodha API Configuration
+ZERODHA_API_KEY=your_api_key_here
+ZERODHA_ACCESS_TOKEN=your_access_token_here
+ZERODHA_USER_ID=your_user_id_here
+ZERODHA_PASSWORD=your_password_here
+ZERODHA_TOTP_SECRET=your_totp_secret_here
+
+# Database Configuration
+DATABASE_URL=sqlite:///trading.db
+
+# Logging Configuration
+LOG_LEVEL=INFO
+LOG_FILE=trading.log
+
+# Trading Configuration
+MAX_POSITION_SIZE=1000000
+MAX_DAILY_LOSS=50000
+STOP_LOSS_PERCENTAGE=0.02
+TAKE_PROFIT_PERCENTAGE=0.05
+
+# Risk Management
+RISK_FREE_RATE=0.05
+DEFAULT_VOLATILITY=0.2
